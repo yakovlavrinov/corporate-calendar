@@ -1,7 +1,7 @@
 <template>
-    <div class="post" v-for="post in posts" :key="post.id">
-        <div><strong>Название: </strong>{{ post.title }}</div>
-        <div><strong>Описание: </strong>{{ post.body }}</div>
+    <div class="">
+        <h3>Список пользователей</h3>
+        <post-item v-for="post in posts" :key="post.id" :post="post" />
     </div>
 </template>
 
@@ -9,7 +9,11 @@
 import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
 import type { Post } from '@/views/CounterView.vue'
+import PostItem from '../PostItem/PostItem.vue'
 export default defineComponent({
+    components: {
+        PostItem
+    },
     props: {
         posts: {
             type: Array as PropType<Post[]>,
@@ -20,9 +24,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.post {
-    padding: 15px;
-    border: 2px solid teal;
-    margin-top: 15px;
-}
 </style>

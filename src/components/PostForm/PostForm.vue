@@ -14,7 +14,7 @@
                 type="text"
                 placeholder="Описание"
             />
-            <button class="btn" @click="createPost">Создать</button>
+            <my-button class="btn" @click="createPost">Создать</my-button>
         </form>
     </div>
 </template>
@@ -22,11 +22,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import type { Post } from '@/views/CounterView.vue'
+import MyButton from '@/components/UI/MyButton.vue'
 interface PostForm {
     title: string
     body: string
 }
 export default defineComponent({
+    components: { MyButton },
     data(): { post: PostForm } {
         return {
             post: {
@@ -65,12 +67,7 @@ form {
     margin-top: 15px;
 }
 .btn {
-    margin-top: 15px;
     align-self: flex-end;
-    padding: 10px 15px;
-    background: none;
-    color: teal;
-    border: 1px solid teal;
-    cursor: pointer;
+    margin-top: 15px;
 }
 </style>

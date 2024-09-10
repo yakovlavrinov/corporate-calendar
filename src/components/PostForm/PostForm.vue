@@ -2,18 +2,8 @@
     <div>
         <form @submit.prevent action="">
             <h4>Создание поста</h4>
-            <input
-                v-model="post.title"
-                class="input"
-                type="text"
-                placeholder="Название"
-            />
-            <input
-                v-model="post.body"
-                class="input"
-                type="text"
-                placeholder="Описание"
-            />
+            <my-input v-model="post.title" type="text" placeholder="Название" />
+            <my-input v-model="post.body" type="text" placeholder="Описание" />
             <my-button class="btn" @click="createPost">Создать</my-button>
         </form>
     </div>
@@ -22,13 +12,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import type { Post } from '@/views/CounterView.vue'
-import MyButton from '@/components/UI/MyButton.vue'
+
 interface PostForm {
     title: string
     body: string
 }
 export default defineComponent({
-    components: { MyButton },
     data(): { post: PostForm } {
         return {
             post: {

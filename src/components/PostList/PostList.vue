@@ -1,8 +1,14 @@
 <template>
-    <div class="">
+    <div v-if="posts.length > 0">
         <h3>Список пользователей</h3>
-        <post-item v-for="post in posts" :key="post.id" :post="post" />
+        <post-item
+            v-for="post in posts"
+            :key="post.id"
+            :post="post"
+            @remove="handleRemove(post)"
+        />
     </div>
+    <h3 class="zero-post" v-else>Список постов пуст</h3>
 </template>
 
 <script lang="ts">
@@ -19,9 +25,17 @@ export default defineComponent({
             type: Array as PropType<Post[]>,
             required: true
         }
+    },
+    methods: {
+        handleRemove(post: Post) {
+            this.$emit('remove', post)
+        }
     }
 })
 </script>
 
 <style scoped>
+.zero-post{
+    color: red;
+}
 </style>

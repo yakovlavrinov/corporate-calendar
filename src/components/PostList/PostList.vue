@@ -1,5 +1,6 @@
 <template>
-    <div v-if="posts.length > 0">
+    <h3 class="zero-post" v-if="isLoading">Загрузка...</h3>
+    <div v-else-if="posts.length > 0">
         <h3>Список пользователей</h3>
         <post-item
             v-for="post in posts"
@@ -24,7 +25,8 @@ export default defineComponent({
         posts: {
             type: Array as PropType<Post[]>,
             required: true
-        }
+        },
+        isLoading: { type: Boolean }
     },
     methods: {
         handleRemove(post: Post) {
@@ -35,7 +37,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.zero-post{
+.zero-post {
     color: red;
 }
 </style>

@@ -1,10 +1,13 @@
 <template>
     <div>
         <h1>Страница с постами</h1>
+        <div class="app__btns">
+            <my-button class="btn_add_post" @click="showDialog"
+                >Создать пост</my-button
+            >
+            <my-select></my-select>
+        </div>
         <my-button @click="fetchPost">Получить посты</my-button>
-        <my-button class="btn_add_post" @click="showDialog"
-            >Создать пост</my-button
-        >
         <my-dialog v-model:show="dialogVisible">
             <post-form @create="createPost" />
         </my-dialog>
@@ -56,7 +59,7 @@ export default defineComponent({
         async fetchPost() {
             try {
                 this.isLoading = true
-                await new Promise(resolve => setTimeout(resolve, 1000))
+                await new Promise((resolve) => setTimeout(resolve, 1000))
                 const response = await axios.get(
                     'https://jsonplaceholder.typicode.com/posts?_limit=10'
                 )
@@ -77,5 +80,9 @@ export default defineComponent({
 <style scoped>
 .btn_add_post {
     margin: 15px 0;
+}
+.app__btns{
+    display: flex;
+    justify-content: space-between;
 }
 </style>

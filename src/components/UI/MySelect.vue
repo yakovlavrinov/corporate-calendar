@@ -1,6 +1,13 @@
-<template >
+<template>
     <select v-modal="modelValue">
-        <option disabled value="">Выберете из списка</option>
+        <option disabled @change="changeOption">Выберете из списка</option>
+        <option
+            v-for="option in options"
+            :key="option.value"
+            :value="option.value"
+        >
+            {{ option.name }}
+        </option>
     </select>
 </template>
 
@@ -13,12 +20,16 @@ export default defineComponent({
             type: String
         },
         options: {
-            type:Array,
-            default: ()=> []
+            type: Array,
+            default: () => []
+        }
+    },
+    methods: {
+        changeOption(event: Event){
+            const select = event.target as HTMLSelectElement
+            this.$emit('update:modelValue', select.value)
         }
     }
 })
 </script>
-<style scoped>
-    
-</style>
+<style scoped></style>

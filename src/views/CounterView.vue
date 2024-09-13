@@ -5,7 +5,7 @@
             <my-button class="btn_add_post" @click="showDialog"
                 >Создать пост</my-button
             >
-            <my-select></my-select>
+            <my-select v-model="selectedSort" :options="sortOptions" />
         </div>
         <my-button @click="fetchPost">Получить посты</my-button>
         <my-dialog v-model:show="dialogVisible">
@@ -27,10 +27,17 @@ export interface Post {
     body: string
 }
 
+interface SortOption {
+    value: string
+    name: string
+}
+
 interface Data {
     posts: Post[]
     dialogVisible: boolean
     isLoading: boolean
+    selectedSort: string
+    sortOptions: SortOption[]
 }
 
 export default defineComponent({
@@ -42,7 +49,12 @@ export default defineComponent({
         return {
             posts: [],
             dialogVisible: false,
-            isLoading: false
+            isLoading: false,
+            selectedSort: '',
+            sortOptions: [
+                { value: 'title', name: 'По названию' },
+                { value: 'body', name: 'По содержимому' }
+            ]
         }
     },
     methods: {
@@ -81,7 +93,7 @@ export default defineComponent({
 .btn_add_post {
     margin: 15px 0;
 }
-.app__btns{
+.app__btns {
     display: flex;
     justify-content: space-between;
 }

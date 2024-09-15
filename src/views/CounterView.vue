@@ -1,6 +1,7 @@
 <template>
     <div>
         <h1>Страница с постами</h1>
+        <my-input v-model="searchQuery" placeholder="Поиск..."/>
         <div class="app__btns">
             <my-button class="btn_add_post" @click="showDialog"
                 >Создать пост</my-button
@@ -11,7 +12,7 @@
         <my-dialog v-model:show="dialogVisible">
             <post-form @create="createPost" />
         </my-dialog>
-        <PostList :isLoading="isLoading" :posts="posts" @remove="removePost" />
+        <PostList :isLoading="isLoading" :posts="sortedAndSearchedPosts" @remove="removePost" />
     </div>
 </template>
 
@@ -27,7 +28,7 @@ export interface Post {
     body: string
 }
 
-interface SortOption {
+export interface SortOption {
     value: string
     name: string
 }
@@ -37,6 +38,7 @@ interface Data {
     dialogVisible: boolean
     isLoading: boolean
     selectedSort: string
+    searchQuery: string
     sortOptions: SortOption[]
 }
 
@@ -51,6 +53,7 @@ export default defineComponent({
             dialogVisible: false,
             isLoading: false,
             selectedSort: '',
+            searchQuery: '',
             sortOptions: [
                 { value: 'title', name: 'По названию' },
                 { value: 'body', name: 'По содержимому' }
@@ -85,6 +88,22 @@ export default defineComponent({
     },
     mounted() {
         this.fetchPost()
+    },
+
+    computed: {
+        sortedPosts() {
+            return [...this.posts].sort((post1:Post, post2:Post)=> {
+                return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
+            })
+        },
+        sortedAndSearchedPosts(){
+            return this.sortedPosts.filter(post => post.title.includes(this.searchQuery))
+        }
+    },
+
+
+    watch: {
+      
     }
 })
 </script>

@@ -1,6 +1,6 @@
 <template>
-    <select v-modal="modelValue">
-        <option disabled @change="changeOption">Выберете из списка</option>
+    <select class v-modal="modelValue" @change="changeOption">
+        <option disabled>Выберете из списка</option>
         <option
             v-for="option in options"
             :key="option.value"
@@ -12,6 +12,8 @@
 </template>
 
 <script lang="ts">
+import type { SortOption } from '@/views/CounterView.vue'
+import type { PropType } from 'vue'
 import { defineComponent } from 'vue'
 export default defineComponent({
     name: 'my-select',
@@ -20,16 +22,20 @@ export default defineComponent({
             type: String
         },
         options: {
-            type: Array,
+            type: Array as PropType<SortOption[]>,
             default: () => []
         }
     },
     methods: {
-        changeOption(event: Event){
+        changeOption(event: Event) {
             const select = event.target as HTMLSelectElement
             this.$emit('update:modelValue', select.value)
         }
     }
 })
 </script>
-<style scoped></style>
+<style scoped>
+select {
+    height: 40px;
+}
+</style>

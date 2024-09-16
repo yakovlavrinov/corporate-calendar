@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1>Страница с постами</h1>
-        <my-input v-model="searchQuery" placeholder="Поиск..."/>
+        <my-input v-model="searchQuery" placeholder="Поиск..." />
         <div class="app__btns">
             <my-button class="btn_add_post" @click="showDialog"
                 >Создать пост</my-button
@@ -12,7 +12,21 @@
         <my-dialog v-model:show="dialogVisible">
             <post-form @create="createPost" />
         </my-dialog>
-        <PostList :isLoading="isLoading" :posts="sortedAndSearchedPosts" @remove="removePost" />
+        <PostList
+            :isLoading="isLoading"
+            :posts="sortedAndSearchedPosts"
+            @remove="removePost"
+        />
+        <div class="page__wrapper">
+            <div
+                v-for="pageNumber in totalPages"
+                :key="pageNumber"
+                class="page"
+                :class="{ 'current-page': page === pageNumber }"
+            >
+                {{ pageNumber }}
+            </div>
+        </div>
     </div>
 </template>
 
@@ -40,6 +54,9 @@ interface Data {
     selectedSort: string
     searchQuery: string
     sortOptions: SortOption[]
+    page: number
+    limit: number
+    totalPages: number
 }
 
 export default defineComponent({
@@ -54,6 +71,9 @@ export default defineComponent({
             isLoading: false,
             selectedSort: '',
             searchQuery: '',
+            page: 1,
+            limit: 10,
+            totalPages: 0,
             sortOptions: [
                 { value: 'title', name: 'По названию' },
                 { value: 'body', name: 'По содержимому' }
@@ -76,7 +96,16 @@ export default defineComponent({
                 this.isLoading = true
                 await new Promise((resolve) => setTimeout(resolve, 1000))
                 const response = await axios.get(
-                    'https://jsonplaceholder.typicode.com/posts?_limit=10'
+                    'https://jsonplaceholder.typicode.com/posts',
+                    {
+                        params: {
+                            _page: this.page,
+                            _limit: this.limit
+                        }
+                    }
+                )
+                this.totalPages = Math.ceil(
+                    response.headers['x-total-count'] / this.limit
                 )
                 this.posts = response.data
             } catch (e) {
@@ -92,19 +121,22 @@ export default defineComponent({
 
     computed: {
         sortedPosts() {
-            return [...this.posts].sort((post1:Post, post2:Post)=> {
-                return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
+            return [...this.posts].sort((post1: Post, post2: Post) => {
+                return post1[this.selectedSort]?.localeCompare(
+                    post2[this.selectedSort]
+                )
             })
         },
-        sortedAndSearchedPosts(){
-            return this.sortedPosts.filter(post => post.title.includes(this.searchQuery))
+        sortedAndSearchedPosts() {
+            return this.sortedPosts.filter((post) =>
+                post.title
+                    .toLowerCase()
+                    .includes(this.searchQuery.toLowerCase())
+            )
         }
     },
 
-
-    watch: {
-      
-    }
+    watch: {}
 })
 </script>
 
@@ -115,5 +147,19 @@ export default defineComponent({
 .app__btns {
     display: flex;
     justify-content: space-between;
+}
+
+.page__wrapper {
+    display: flex;
+    margin-top: 15px;
+}
+
+.page {
+    border: 1px solid black;
+    padding: 10px;
+}
+
+.current-page {
+    border: 2px solid teal;
 }
 </style>

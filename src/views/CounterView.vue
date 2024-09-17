@@ -17,16 +17,18 @@
             :posts="sortedAndSearchedPosts"
             @remove="removePost"
         />
-        <div class="page__wrapper">
+        <div ref="observer" class="observer"></div>
+        <!-- <div class="page__wrapper">
             <div
                 v-for="pageNumber in totalPages"
                 :key="pageNumber"
                 class="page"
                 :class="{ 'current-page': page === pageNumber }"
+                @click="changePage(pageNumber)"
             >
                 {{ pageNumber }}
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -91,10 +93,14 @@ export default defineComponent({
         showDialog() {
             this.dialogVisible = true
         },
+
+        // changePage(pageNumber: number){
+        //     this.page=pageNumber
+        // },
         async fetchPost() {
             try {
                 this.isLoading = true
-                await new Promise((resolve) => setTimeout(resolve, 1000))
+                // await new Promise((resolve) => setTimeout(resolve, 1000))
                 const response = await axios.get(
                     'https://jsonplaceholder.typicode.com/posts',
                     {
@@ -107,16 +113,53 @@ export default defineComponent({
                 this.totalPages = Math.ceil(
                     response.headers['x-total-count'] / this.limit
                 )
-                this.posts = response.data
+                this.posts =[...this.posts, ...response.data]
             } catch (e) {
                 alert('Error error error')
             } finally {
                 this.isLoading = false
             }
+        },
+        async loadMorePosts() {
+            this.page += 1
+            try {
+               
+                // await new Promise((resolve) => setTimeout(resolve, 1000))
+                const response = await axios.get(
+                    'https://jsonplaceholder.typicode.com/posts',
+                    {
+                        params: {
+                            _page: this.page,
+                            _limit: this.limit
+                        }
+                    }
+                )
+                this.totalPages = Math.ceil(
+                    response.headers['x-total-count'] / this.limit
+                )
+                this.posts =[...this.posts, ...response.data]
+            } catch (e) {
+                alert('Error error error')
+            }
         }
     },
     mounted() {
         this.fetchPost()
+        console.log(this.$refs.observer)
+        const options = {
+            rootMargin: '0px',
+            threshold: 1.0
+        }
+
+        const callback = (entries, obserer)=> {
+            if(entries[0].isIntersecting && this.page < this.totalPages){
+                this.loadMorePosts()
+            }
+
+        }
+
+        const observer = new IntersectionObserver(callback, options)
+        observer.observe(this.$refs.observer)
     },
 
     computed: {
@@ -136,7 +179,11 @@ export default defineComponent({
         }
     },
 
-    watch: {}
+    watch: {
+        // page(){
+        //     this.fetchPost()
+        // }
+    }
 })
 </script>
 
@@ -161,5 +208,10 @@ export default defineComponent({
 
 .current-page {
     border: 2px solid teal;
+}
+.observer{
+    height: 30px;
+    background: green;
+
 }
 </style>
